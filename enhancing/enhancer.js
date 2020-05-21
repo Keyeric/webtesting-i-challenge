@@ -37,56 +37,52 @@ The durability of the item is not changed.
   }
 }
 
-function fail(item) {
+function fail(item2) {
   /*
   When enhancement fails
 If the item's enhancement is less than 15, the durability of the item is decreased by 5.
 If the item's enhancement is 15 or more, the durability of the item is decreased by 10.
 If the item's enhancement level is greater than 16, the enhancement level decreases by 1 (17 goes down to 16, 18 goes down to 17). 
 */
-  if (item.enhancement <= 14) {
-    console.log("< 14", item.enhancement);
-    if (item.durability <= 100 && item.durability >= 5) {
-      console.log(item.durability);
+  if (item2.enhancement <= 14) {
+    if (item2.durability <= 100 && item2.durability >= 5) {
       return {
-        ...item,
-        durability: item.durability - 5,
+        ...item2,
+        durability: item2.durability - 5,
       };
-    } else if (item.durability <= 100 && item.durability < 5) {
+    } else if (item2.durability <= 100 && item2.durability < 5) {
       return {
-        ...item,
+        ...item2,
         durability: 0,
       };
     }
-  } else if (item.enhancement >= 15) {
-    console.log(">= 15", item.enhancement);
-    if (item.durability <= 100 && item.durability >= 10) {
+  } else if (item2.enhancement == 15 || item2.enhancement == 16) {
+    if (item2.durability <= 100 && item2.durability >= 10) {
       return {
-        ...item,
-        durability: item.durability - 10,
+        ...item2,
+        durability: item2.durability - 10,
       };
-    } else if (item.durability <= 100 && item.durability < 10) {
+    } else if (item2.durability <= 100 && item2.durability < 10) {
       return {
-        ...item,
+        ...item2,
         durability: 0,
       };
     }
-  } else if (item.enhancement == 17) {
-    console.log(">16", item.enhancement);
-    if (item.durability <= 100 && item.durability >= 10) {
+  } else if (item2.enhancement > 16) {
+    if (item2.durability <= 100 && item2.durability >= 10) {
       return {
-        ...item,
-        enhancement: item.enhancement - 1, //Error here, pls fix later
-        durability: item.durability - 10,
+        ...item2,
+        enhancement: item2.enhancement - 1, //Error here, pls fix later
+        durability: item2.durability - 10,
       };
-    } else if (item.durability <= 100 && item.durability < 10) {
+    } else if (item2.durability <= 100 && item2.durability < 10) {
       return {
-        ...item,
-        enhancement: item.enhancement - 1, //error here, pls fix later
+        ...item2,
+        enhancement: item2.enhancement - 1, //error here, pls fix later
         durability: 0,
       };
     }
-  } else if (item.durability < 0 || item.durability > 100) {
+  } else if (item2.durability < 0 || item2.durability > 100) {
     return null;
   }
 }
@@ -95,9 +91,26 @@ function repair(item) {
   /*
    Return durability to 100
   */
-  return { ...item };
+  return {
+    ...item,
+    durability: 100,
+  };
 }
 
 function get(item) {
-  return { ...item };
+  /*
+  returns a new item with the name property modified according to the following rules: 
+  if the enhancement level is 0, the the name is not modified; 
+  if the enhancement level is greater than 0, change the name to include the enhancement level, preceded by a plus sign ( + ), between square brackets before the item's name.
+  */
+  if (item.enhancement === 0) {
+    return {
+      ...item,
+    };
+  } else if (item.enhancement >= 1 && item.enhancement <= 20) {
+    return {
+      ...item,
+      name: `[+${item.enhancement}] ${item.name}`,
+    };
+  }
 }

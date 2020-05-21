@@ -3,8 +3,23 @@ const { succeed, fail, repair, get } = require("./enhancer");
 // test away!
 
 const item = {
-  name: "Iron Sword",
+  name: "Diamond Sword",
   durability: 50,
+  enhancement: 15,
+};
+const item2 = {
+  name: "Steel Sword",
+  durability: 10,
+  enhancement: 0,
+};
+const item3 = {
+  name: "Iron Sword",
+  durability: 100,
+  enhancement: 20,
+};
+const item4 = {
+  name: "Iron Sword",
+  durability: 82,
   enhancement: 14,
 };
 
@@ -28,62 +43,60 @@ describe("Enhancer", () => {
   });
 
   describe("Fail()", () => {
-    const dang = fail(item);
+    const dang = fail(item2);
     it("should pass when it is lower than 15", () => {
-      if (item.enhancement <= 14) {
-        if (item.durability >= 5) {
-          console.log("item, dang", item.durability, dang.durability);
-          expect(dang.durability).toBe(item.durability);
-        } else if (item.durability < 5) {
+      if (item2.enhancement <= 14) {
+        if (item2.durability >= 5) {
+          expect(dang.durability).toBe(item2.durability - 5);
+        } else if (item2.durability < 5) {
           expect(dang.durability).toBe(0);
         }
       }
     });
 
     it("should pass when it is 15 or higher", () => {
-      if (item.enhancement > 14) {
-        if (item.durability > 9) {
-          expect(dang.durability).toBe(item.durability);
-        } else if (item.durability < 10) {
+      if (item2.enhancement > 14) {
+        if (item2.durability > 9) {
+          expect(dang.durability).toBe(item2.durability - 10);
+        } else if (item2.durability < 10) {
           expect(dang.durability).toBe(0);
         }
       }
     });
 
     it("should pass when it is higher than 16", () => {
-      if (item.enhancement > 17) {
+      if (item2.enhancement > 16) {
         //Enhancement range from 0-20
-        expect(dang.enhancement).toBe(item.enhancement); // FIX LATER, NEEDS TO SUBTRACT ONE
-        if (item.durability > 10) {
-          //durability range from 0-100
-          //   expect(dang.enhancement).toBe(item.enhancement - 1); // FIX LATER, NEEDS TO SUBTRACT ONE
-
-          //   console.log("10 or higher enh", item.enhancement);
-          //   console.log("10 or higher dang enh", dang.enhancement);
-          //   console.log("10 or higher dur", item.durability);
-          //   console.log("10 or higher dang dur", dang.durability);
-
-          expect(dang.durability).toBe(item.durability - 10);
-        } else if (item.durability <= 10) {
-          //   expect(dang.enhancement).toBe(item.enhancement - 1); // FIX LATER, NEEDS TO SUBTRACT ONE
-
-          //   console.log("lower than 10 enh", item.enhancement);
-          //   console.log("lower than 10 dang enh", dang.enhancement);
-          //   console.log("lower than 10 dur", item.durability);
-          //   console.log("lower than 10 dang dur", dang.durability);
-
+        expect(dang.enhancement).toBe(item2.enhancement - 1); // FIX LATER, NEEDS TO SUBTRACT ONE
+        if (item2.durability > 10) {
+          expect(dang.durability).toBe(item2.durability - 10);
+        } else if (item2.durability <= 10) {
           expect(dang.durability).toBe(0);
         }
-        console.log("higher than 16", dang);
       }
     });
   });
 
   describe("Repair()", () => {
-    it("returns a new item with the durability restored to 100.", () => {});
+    const fix = repair(item);
+    const fix2 = repair(item2);
+
+    it("returns a new item with the durability restored to 100.", () => {
+      expect(fix.durability).toBe(100);
+      expect(fix2.durability).toBe(100);
+    });
   });
 
   describe("Get()", () => {
-    it("returns a new item with the name property modified according to the following rules: if the enhancement level is 0, the the name is not modified; if the enhancement level is greater than 0, change the name to include the enhancement level, preceded by a plus sign ( + ), between square brackets before the item's name.", () => {});
+    const gimme2 = get(item2);
+    const gimme3 = get(item3);
+    const gimme4 = get(item4);
+    it("should return an item with the enhancement level in the name", () => {
+      expect(gimme4.name).toBe(`[+${item4.enhancement}] ${item4.name}`);
+      expect(gimme3.name).toBe(`[+${item3.enhancement}] ${item3.name}`);
+    });
+    it("should return level 0 enhancement as just the name", () => {
+      expect(gimme2.name).toBe(`${item2.name}`);
+    });
   });
 });
